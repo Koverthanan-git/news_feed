@@ -1,0 +1,25 @@
+# Environment variables
+.env
+
+# Python Virtual Environment
+venv/
+ENV/
+env/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node dependencies
+node_modules/
+
+# Local databases and logs
+data/
+logs/
+*.db
+*.log
+
+# OS metadata
+.DS_Store

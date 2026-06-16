@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Web Analytics Comparison — Explore how Web Server Logs, Google Analytics, and Browser Developer Tools collect visitor data." />
+  <title>Web Analytics Comparison | Visitor Data Collection Methods</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Google Analytics (gtag.js) — PAGE TAGGING METHOD -->
+  <!-- Replace G-XXXXXXXXXX with your actual Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX', {
+      page_title: document.title,
+      send_page_view: true
+    });
+
+    // Custom event tracking
+    function trackEvent(category, action, label) {
+      gtag('event', action, {
+        event_category: category,
+        event_label: label
+      });
+      // Also log to our simulation panel
+      if (window.gaSimLog) {
+        window.gaSimLog(category, action, label);
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ═══════════════════════════════════════ -->
+  <!-- NAVIGATION                              -->
+  <!-- ═══════════════════════════════════════ -->
+  <nav id="main-nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo" id="nav-logo" onclick="navigateTo('home'); return false;">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">WebAnalytics</span>
+      </a>
+      <div class="nav-links">
+        <a href="#" id="nav-home" class="nav-link active" onclick="navigateTo('home'); return false;">Home</a>
+        <a href="#" id="nav-about" class="nav-link" onclick="navigateTo('about'); return false;">About</a>
+        <a href="#" id="nav-products" class="nav-link" onclick="navigateTo('products'); return false;">Products</a>
+        <a href="#" id="nav-contact" class="nav-link" onclick="navigateTo('contact'); return false;">Contact</a>
+        <a href="#" id="nav-dashboard" class="nav-link nav-link--cta" onclick="navigateTo('dashboard'); return false;">📊 Dashboard</a>
+      </div>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#" onclick="navigateTo('home'); return false;">Home</a>
+    <a href="#" onclick="navigateTo('about'); return false;">About</a>
+    <a href="#" onclick="navigateTo('products'); return false;">Products</a>
+    <a href="#" onclick="navigateTo('contact'); return false;">Contact</a>
+    <a href="#" onclick="navigateTo('dashboard'); return false;">📊 Dashboard</a>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PAGE: HOME                              -->
+  <!-- ═══════════════════════════════════════ -->
+  <section id="page-home" class="page active">
+    <div class="hero">
+      <div class="hero-bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-content">
+        <span class="hero-badge">🔍 Web Analytics Study</span>
+        <h1 class="hero-title">Understanding <span class="gradient-text">Visitor Data</span> Collection</h1>
+        <p class="hero-subtitle">Explore three fundamental methods of collecting website visitor data: Server Logs, Google Analytics Page Tagging, and Browser Developer Tools.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="btn-explore" onclick="navigateTo('dashboard'); trackEvent('CTA', 'click', 'Explore Dashboard');">
+            Explore Dashboard
+            <span class="btn-arrow">→</span>
+          </button>
+          <button class="btn btn-secondary" id="btn-learn" onclick="navigateTo('about'); trackEvent('CTA', 'click', 'Learn More');">
+            Learn More
+          </button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="data-card card-float-1">
+          <div class="data-card-icon">📋</div>
+          <div class="data-card-label">Server Logs</div>
+          <div class="data-card-value">IP, URL, Status</div>
+        </div>
+        <div class="data-card card-float-2">
+          <div class="data-card-icon">📈</div>
+          <div class="data-card-label">Google Analytics</div>
+          <div class="data-card-value">Sessions, Events</div>
+        </div>
+        <div class="data-card card-float-3">
+          <div class="data-card-icon">🛠️</div>
+          <div class="data-card-label">Dev Tools</div>
+          <div class="data-card-value">Network, DOM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Method Cards -->
+    <div class="section">
+      <h2 class="section-title">Three Methods of <span class="gradient-text">Data Collection</span></h2>
+      <div class="method-grid">
+        <div class="method-card" onclick="navigateTo('dashboard'); trackEvent('Method', 'click', 'Server Logs');">
+          <div class="method-icon">🗄️</div>
+          <h3>Web Server Logs</h3>
+          <p>Automatically recorded by web servers (Apache, Nginx, Express). Captures every HTTP request with IP addresses, timestamps, URLs, status codes, and user agents.</p>
+          <div class="method-tag">Passive Collection</div>
+        </div>
+        <div class="method-card" onclick="navigateTo('dashboard'); trackEvent('Method', 'click', 'Google Analytics');">
+          <div class="method-icon">📊</div>
+          <h3>Google Analytics</h3>
+          <p>JavaScript-based page tagging that tracks user behavior, demographics, sessions, page views, bounce rates, and conversion goals in real time.</p>
+          <div class="method-tag">Active Tagging</div>
+        </div>
+        <div class="method-card" onclick="navigateTo('dashboard'); trackEvent('Method', 'click', 'Dev Tools');">
+          <div class="method-icon">🔧</div>
+          <h3>Browser Dev Tools</h3>
+          <p>Built-in browser tools (F12) that inspect network requests, cookies, local storage, performance metrics, and DOM interactions in real time.</p>
+          <div class="method-tag">Manual Inspection</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PAGE: ABOUT                             -->
+  <!-- ═══════════════════════════════════════ -->
+  <section id="page-about" class="page">
+    <div class="page-header">
+      <h1>About This <span class="gradient-text">Project</span></h1>
+      <p>An educational exploration of web analytics data collection methods</p>
+    </div>
+    <div class="content-section">
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>🎯 Purpose</h3>
+          <p>This website was built as an educational tool to demonstrate and compare three major methods of collecting visitor data on the web. By navigating through these pages, you are generating real data that can be viewed in the Dashboard.</p>
+        </div>
+        <div class="info-card">
+          <h3>🏗️ Technology Stack</h3>
+          <ul>
+            <li><strong>Server:</strong> Node.js + Express</li>
+            <li><strong>Logging:</strong> Morgan (Apache format)</li>
+            <li><strong>Analytics:</strong> Google Analytics 4 (gtag.js)</li>
+            <li><strong>Frontend:</strong> Vanilla HTML, CSS, JS</li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>📚 How It Works</h3>
+          <p>Every page visit, click, and interaction is captured simultaneously by server-side logs, the Google Analytics tag, and is visible through browser developer tools — allowing a direct comparison of the data each method collects.</p>
+        </div>
+        <div class="info-card">
+          <h3>🔬 Academic Context</h3>
+          <p>Web analytics is essential for understanding user behavior, optimizing website performance, and making data-driven decisions. This project provides hands-on experience with the three most common data collection approaches used by web professionals.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PAGE: PRODUCTS                          -->
+  <!-- ═══════════════════════════════════════ -->
+  <section id="page-products" class="page">
+    <div class="page-header">
+      <h1>Our <span class="gradient-text">Products</span></h1>
+      <p>Browse our demo products — each interaction generates trackable analytics data</p>
+    </div>
+    <div class="content-section">
+      <div class="product-grid">
+        <div class="product-card" id="product-1" onclick="trackEvent('Product', 'view', 'Analytics Pro');">
+          <div class="product-image" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            <span class="product-emoji">📊</span>
+          </div>
+          <div class="product-info">
+            <h3>Analytics Pro</h3>
+            <p>Advanced analytics dashboard with real-time insights</p>
+            <span class="product-price">$99/mo</span>
+            <button class="btn btn-small" onclick="trackEvent('Product', 'add_to_cart', 'Analytics Pro');">Add to Cart</button>
+          </div>
+        </div>
+        <div class="product-card" id="product-2" onclick="trackEvent('Product', 'view', 'DataVault');">
+          <div class="product-image" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+            <span class="product-emoji">🔐</span>
+          </div>
+          <div class="product-info">
+            <h3>DataVault</h3>
+            <p>Secure data storage with encrypted backups</p>
+            <span class="product-price">$149/mo</span>
+            <button class="btn btn-small" onclick="trackEvent('Product', 'add_to_cart', 'DataVault');">Add to Cart</button>
+          </div>
+        </div>
+        <div class="product-card" id="product-3" onclick="trackEvent('Product', 'view', 'TrackBot');">
+          <div class="product-image" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+            <span class="product-emoji">🤖</span>
+          </div>
+          <div class="product-info">
+            <h3>TrackBot</h3>
+            <p>Automated tracking and alerting system</p>
+            <span class="product-price">$79/mo</span>
+            <button class="btn btn-small" onclick="trackEvent('Product', 'add_to_cart', 'TrackBot');">Add to Cart</button>
+          </div>
+        </div>
+        <div class="product-card" id="product-4" onclick="trackEvent('Product', 'view', 'InsightAI');">
+          <div class="product-image" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+            <span class="product-emoji">🧠</span>
+          </div>
+          <div class="product-info">
+            <h3>InsightAI</h3>
+            <p>AI-powered predictive analytics engine</p>
+            <span class="product-price">$199/mo</span>
+            <button class="btn btn-small" onclick="trackEvent('Product', 'add_to_cart', 'InsightAI');">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PAGE: CONTACT                           -->
+  <!-- ═══════════════════════════════════════ -->
+  <section id="page-contact" class="page">
+    <div class="page-header">
+      <h1>Get In <span class="gradient-text">Touch</span></h1>
+      <p>Submit this form to see how form interactions are tracked by each method</p>
+    </div>
+    <div class="content-section">
+      <div class="contact-wrapper">
+        <form class="contact-form" id="contact-form" onsubmit="handleFormSubmit(event);">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="John Doe" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="john@example.com" required />
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <select id="subject" name="subject" onchange="trackEvent('Form', 'select_change', this.value);">
+              <option value="">Select a topic</option>
+              <option value="general">General Inquiry</option>
+              <option value="support">Technical Support</option>
+              <option value="feedback">Feedback</option>
+              <option value="partnership">Partnership</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4" placeholder="Your message..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="btn-submit">
+            Send Message <span class="btn-arrow">→</span>
+          </button>
+        </form>
+        <div class="contact-info-panel">
+          <h3>📡 Data Being Collected</h3>
+          <p>As you interact with this form, data is being captured by:</p>
+          <ul>
+            <li><strong>Server Logs:</strong> Records the POST request when you submit</li>
+            <li><strong>Google Analytics:</strong> Tracks form field interactions and submission events</li>
+            <li><strong>Dev Tools:</strong> You can inspect Network tab to see request payload</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PAGE: DASHBOARD                         -->
+  <!-- ═══════════════════════════════════════ -->
+  <section id="page-dashboard" class="page">
+    <div class="page-header">
+      <h1>Analytics <span class="gradient-text">Dashboard</span></h1>
+      <p>Compare visitor data collected by each of the three methods</p>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="dashboard-tabs">
+      <button class="dash-tab active" id="tab-server" onclick="switchTab('server')">🗄️ Server Logs</button>
+      <button class="dash-tab" id="tab-ga" onclick="switchTab('ga')">📈 Google Analytics</button>
+      <button class="dash-tab" id="tab-devtools" onclick="switchTab('devtools')">🛠️ Dev Tools</button>
+      <button class="dash-tab" id="tab-comparison" onclick="switchTab('comparison')">⚖️ Comparison</button>
+    </div>
+
+    <!-- ──── TAB: Server Logs ──── -->
+    <div class="tab-content active" id="content-server">
+      <div class="dash-header">
+        <h2>Web Server Log Data</h2>
+        <div class="dash-actions">
+          <button class="btn btn-small" onclick="loadServerLogs()">🔄 Refresh</button>
+          <button class="btn btn-small btn-danger" onclick="clearLogs()">🗑️ Clear Logs</button>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stats-row" id="server-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total-requests">0</div>
+          <div class="stat-label">Total Requests</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-unique-urls">0</div>
+          <div class="stat-label">Unique URLs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-avg-response">-</div>
+          <div class="stat-label">Avg Response</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-error-rate">0%</div>
+          <div class="stat-label">Error Rate</div>
+        </div>
+      </div>
+
+      <!-- Data Collected Table -->
+      <div class="data-panel">
+        <h3>📋 Data Fields Captured by Server Logs</h3>
+        <table class="data-table" id="server-fields-table">
+          <thead>
+            <tr>
+              <th>Data Field</th>
+              <th>Description</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Client IP</td><td>IP address of the visitor</td><td>192.168.1.45</td></tr>
+            <tr><td>Timestamp</td><td>Date and time of the request</td><td>16/Jun/2026:10:30:15 +0530</td></tr>
+            <tr><td>HTTP Method</td><td>GET, POST, PUT, DELETE</td><td>GET</td></tr>
+            <tr><td>Request URL</td><td>The page/resource requested</td><td>/products</td></tr>
+            <tr><td>Status Code</td><td>HTTP response status</td><td>200, 404, 500</td></tr>
+            <tr><td>Response Size</td><td>Size of response in bytes</td><td>15234</td></tr>
+            <tr><td>Referer</td><td>Previous page the user came from</td><td>https://google.com</td></tr>
+            <tr><td>User-Agent</td><td>Browser and OS information</td><td>Mozilla/5.0 (Macintosh...)</td></tr>
+            <tr><td>Response Time</td><td>Time taken to serve the request</td><td>23ms</td></tr>
+            <tr><td>Protocol</td><td>HTTP version used</td><td>HTTP/1.1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Raw Logs -->
+      <div class="data-panel">
+        <h3>📄 Raw Access Log (Apache Combined Format)</h3>
+        <div class="log-viewer" id="access-log-viewer">
+          <p class="log-placeholder">Click "Refresh" to load server logs...</p>
+        </div>
+      </div>
+
+      <!-- Parsed Logs -->
+      <div class="data-panel">
+        <h3>📊 Parsed Detailed Logs (JSON)</h3>
+        <div class="log-table-wrapper">
+          <table class="data-table" id="detailed-log-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Method</th>
+                <th>URL</th>
+                <th>Status</th>
+                <th>Response</th>
+                <th>Browser</th>
+                <th>OS</th>
+              </tr>
+            </thead>
+            <tbody id="detailed-log-body">
+              <tr><td colspan="7" class="log-placeholder">Click "Refresh" to load logs...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── TAB: Google Analytics ──── -->
+    <div class="tab-content" id="content-ga">
+      <div class="dash-header">
+        <h2>Google Analytics (Page Tagging) Data</h2>
+      </div>
+
+      <div class="ga-notice">
+        <div class="ga-notice-icon">ℹ️</div>
+        <div>
+          <strong>Note:</strong> Google Analytics data is sent to Google's servers and viewed in the GA4 dashboard at <a href="https://analytics.google.com" target="_blank" rel="noopener">analytics.google.com</a>. Below is a simulation of the data it collects, plus the real gtag.js events fired on this page.
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value" id="ga-pageviews">0</div>
+          <div class="stat-label">Page Views</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="ga-events">0</div>
+          <div class="stat-label">Events Fired</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="ga-session-time">0s</div>
+          <div class="stat-label">Session Duration</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="ga-pages-per-session">0</div>
+          <div class="stat-label">Pages / Session</div>
+        </div>
+      </div>
+
+      <div class="data-panel">
+        <h3>📋 Data Fields Captured by Google Analytics</h3>
+        <table class="data-table">
+          <thead>
+            <tr><th>Data Field</th><th>Description</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Client ID</td><td>Unique anonymous user identifier (cookie)</td><td>GA1.1.123456789.1718500000</td></tr>
+            <tr><td>Session ID</td><td>Unique session identifier</td><td>1718500000</td></tr>
+            <tr><td>Page Views</td><td>Number of pages viewed per session</td><td>5</td></tr>
+            <tr><td>Page Title</td><td>Title of each viewed page</td><td>Products | WebAnalytics</td></tr>
+            <tr><td>Page Location</td><td>Full URL of the page</td><td>http://localhost:3000/products</td></tr>
+            <tr><td>Events</td><td>User interactions (clicks, scrolls, form submits)</td><td>click, scroll, form_submit</td></tr>
+            <tr><td>Session Duration</td><td>Total time spent in the session</td><td>4m 32s</td></tr>
+            <tr><td>Bounce Rate</td><td>% of single-page sessions</td><td>35%</td></tr>
+            <tr><td>Traffic Source</td><td>How the user arrived (organic, direct, referral)</td><td>Direct</td></tr>
+            <tr><td>User Demographics</td><td>Country, city, language</td><td>India, Chennai, en-US</td></tr>
+            <tr><td>Device Info</td><td>Device category, brand, model, screen resolution</td><td>Desktop, 1920x1080</td></tr>
+            <tr><td>Technology</td><td>Browser, OS, screen resolution</td><td>Chrome 126, macOS</td></tr>
+            <tr><td>Engagement Rate</td><td>% of engaged sessions (>10s or 2+ pageviews)</td><td>72%</td></tr>
+            <tr><td>Conversions</td><td>Completed goal events</td><td>form_submit, purchase</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Simulated GA Event Log -->
+      <div class="data-panel">
+        <h3>📡 Live GA Events Fired on This Page</h3>
+        <div class="ga-event-log" id="ga-event-log">
+          <div class="ga-event">
+            <span class="ga-event-time">--:--:--</span>
+            <span class="ga-event-badge">page_view</span>
+            <span class="ga-event-detail">Waiting for interactions...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- GA Tracking Code -->
+      <div class="data-panel">
+        <h3>🏷️ Google Analytics Page Tag Code</h3>
+        <pre class="code-block"><code>&lt;!-- Google Analytics (gtag.js) --&gt;
+&lt;script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"&gt;&lt;/script&gt;
+&lt;script&gt;
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX', {
+    page_title: document.title,
+    send_page_view: true
+  });
+
+  // Custom event tracking
+  function trackEvent(category, action, label) {
+    gtag('event', action, {
+      event_category: category,
+      event_label: label
+    });
+  }
+&lt;/script&gt;</code></pre>
+      </div>
+    </div>
+
+    <!-- ──── TAB: Dev Tools ──── -->
+    <div class="tab-content" id="content-devtools">
+      <div class="dash-header">
+        <h2>Browser Developer Tools Data</h2>
+      </div>
+
+      <div class="devtools-guide">
+        <div class="devtools-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Open Developer Tools</h3>
+            <p>Press <kbd>F12</kbd> or <kbd>Cmd+Option+I</kbd> (Mac) / <kbd>Ctrl+Shift+I</kbd> (Windows) to open Browser Developer Tools.</p>
+          </div>
+        </div>
+        <div class="devtools-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Network Tab</h3>
+            <p>Navigate to the <strong>Network</strong> tab to see all HTTP requests, response headers, payloads, timing, and waterfall charts.</p>
+          </div>
+        </div>
+        <div class="devtools-step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Application Tab</h3>
+            <p>Check <strong>Application → Cookies</strong> and <strong>Local Storage</strong> to see stored tracking data including GA cookies.</p>
+          </div>
+        </div>
+        <div class="devtools-step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Console Tab</h3>
+            <p>View JavaScript logs, errors, and run commands like <code>document.cookie</code> or <code>navigator.userAgent</code>.</p>
+          </div>
+        </div>
+        <div class="devtools-step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h3>Performance Tab</h3>
+            <p>Record and analyze page load performance, paint timings, and JavaScript execution times.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-panel">
+        <h3>📋 Data Fields Visible in Browser Developer Tools</h3>
+        <table class="data-table">
+          <thead>
+            <tr><th>Data Field</th><th>Dev Tools Tab</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>HTTP Requests</td><td>Network</td><td>Every resource request (HTML, CSS, JS, images, API calls)</td></tr>
+            <tr><td>Request Headers</td><td>Network</td><td>Accept, User-Agent, Cookie, Authorization, etc.</td></tr>
+            <tr><td>Response Headers</td><td>Network</td><td>Content-Type, Cache-Control, Set-Cookie, etc.</td></tr>
+            <tr><td>Request/Response Body</td><td>Network</td><td>Form data, JSON payloads, HTML content</td></tr>
+            <tr><td>Timing Waterfall</td><td>Network</td><td>DNS, TCP, TLS, TTFB, Content Download times</td></tr>
+            <tr><td>Cookies</td><td>Application</td><td>All cookies set by the site (session, analytics, etc.)</td></tr>
+            <tr><td>Local Storage</td><td>Application</td><td>Key-value pairs stored in localStorage</td></tr>
+            <tr><td>Session Storage</td><td>Application</td><td>Temporary session-scoped storage</td></tr>
+            <tr><td>IndexedDB</td><td>Application</td><td>Client-side database entries</td></tr>
+            <tr><td>DOM Elements</td><td>Elements</td><td>Full page structure and applied CSS styles</td></tr>
+            <tr><td>JavaScript Console</td><td>Console</td><td>Logs, errors, warnings, and interactive evaluation</td></tr>
+            <tr><td>Performance Metrics</td><td>Performance</td><td>FCP, LCP, CLS, TTI, script execution times</td></tr>
+            <tr><td>Memory Usage</td><td>Memory</td><td>JS heap size, DOM node count, event listeners</td></tr>
+            <tr><td>Service Workers</td><td>Application</td><td>Registered service workers and cache storage</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Live Browser Data -->
+      <div class="data-panel">
+        <h3>🖥️ Your Current Browser Data (Collected via JavaScript)</h3>
+        <div class="browser-data-grid" id="browser-data-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── TAB: Comparison ──── -->
+    <div class="tab-content" id="content-comparison">
+      <div class="dash-header">
+        <h2>Method Comparison</h2>
+      </div>
+
+      <div class="data-panel">
+        <h3>⚖️ Side-by-Side Comparison of Data Collection Methods</h3>
+        <div class="comparison-table-wrapper">
+          <table class="data-table comparison-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>🗄️ Server Logs</th>
+                <th>📈 Google Analytics</th>
+                <th>🛠️ Dev Tools</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Collection Method</strong></td>
+                <td>Automatic (server-side)</td>
+                <td>JavaScript tag (client-side)</td>
+                <td>Manual inspection (client-side)</td>
+              </tr>
+              <tr>
+                <td><strong>Setup Required</strong></td>
+                <td>Minimal — built into web servers</td>
+                <td>Moderate — requires adding tracking code</td>
+                <td>None — built into browsers</td>
+              </tr>
+              <tr>
+                <td><strong>Data Storage</strong></td>
+                <td>Local log files on server</td>
+                <td>Google's cloud servers</td>
+                <td>Not stored (real-time only)</td>
+              </tr>
+              <tr>
+                <td><strong>IP Address</strong></td>
+                <td>✅ Full IP captured</td>
+                <td>❌ Not exposed (anonymized)</td>
+                <td>⚠️ Visible in request headers</td>
+              </tr>
+              <tr>
+                <td><strong>User Identity</strong></td>
+                <td>❌ No user identification</td>
+                <td>✅ Anonymous Client ID (cookie)</td>
+                <td>⚠️ Can inspect cookies manually</td>
+              </tr>
+              <tr>
+                <td><strong>Page Views</strong></td>
+                <td>✅ Inferred from requests</td>
+                <td>✅ Accurate page view count</td>
+                <td>⚠️ Manual observation only</td>
+              </tr>
+              <tr>
+                <td><strong>User Interactions</strong></td>
+                <td>❌ Not captured</td>
+                <td>✅ Clicks, scrolls, form events</td>
+                <td>✅ Full visibility via event listeners</td>
+              </tr>
+              <tr>
+                <td><strong>Session Duration</strong></td>
+                <td>❌ Cannot determine</td>
+                <td>✅ Automatically tracked</td>
+                <td>⚠️ Manual timing required</td>
+              </tr>
+              <tr>
+                <td><strong>Bounce Rate</strong></td>
+                <td>❌ Not available</td>
+                <td>✅ Calculated automatically</td>
+                <td>❌ Not available</td>
+              </tr>
+              <tr>
+                <td><strong>Demographics</strong></td>
+                <td>❌ Not available</td>
+                <td>✅ Country, city, language, age</td>
+                <td>⚠️ Language & timezone visible</td>
+              </tr>
+              <tr>
+                <td><strong>Device Info</strong></td>
+                <td>⚠️ Parsed from User-Agent</td>
+                <td>✅ Device, brand, model, resolution</td>
+                <td>✅ Full device info accessible</td>
+              </tr>
+              <tr>
+                <td><strong>Performance Metrics</strong></td>
+                <td>⚠️ Response time only</td>
+                <td>⚠️ Core Web Vitals</td>
+                <td>✅ Full timing breakdown</td>
+              </tr>
+              <tr>
+                <td><strong>Cookies & Storage</strong></td>
+                <td>❌ Not visible</td>
+                <td>✅ Sets tracking cookies</td>
+                <td>✅ Full inspection capability</td>
+              </tr>
+              <tr>
+                <td><strong>Bot Traffic</strong></td>
+                <td>✅ Captured (all requests)</td>
+                <td>❌ Filtered out</td>
+                <td>❌ Not applicable</td>
+              </tr>
+              <tr>
+                <td><strong>Cached Pages</strong></td>
+                <td>❌ Not logged (no request)</td>
+                <td>✅ Still tracked via JS</td>
+                <td>✅ Visible in cache storage</td>
+              </tr>
+              <tr>
+                <td><strong>Error Tracking</strong></td>
+                <td>✅ HTTP 4xx/5xx status codes</td>
+                <td>⚠️ Limited (custom events needed)</td>
+                <td>✅ Full JS error console</td>
+              </tr>
+              <tr>
+                <td><strong>Privacy Impact</strong></td>
+                <td>Low — no client-side tracking</td>
+                <td>High — requires GDPR consent</td>
+                <td>None — user's own inspection</td>
+              </tr>
+              <tr>
+                <td><strong>Real-time</strong></td>
+                <td>❌ Requires log parsing</td>
+                <td>✅ Real-time dashboard</td>
+                <td>✅ Real-time inspection</td>
+              </tr>
+              <tr>
+                <td><strong>Scalability</strong></td>
+                <td>⚠️ Large log files grow fast</td>
+                <td>✅ Cloud-based, unlimited</td>
+                <td>❌ Single user, single session</td>
+              </tr>
+              <tr class="summary-row">
+                <td><strong>Best For</strong></td>
+                <td>Server monitoring, security auditing, debugging</td>
+                <td>Marketing analytics, user behavior, conversion tracking</td>
+                <td>Development, debugging, performance optimization</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Venn Diagram -->
+      <div class="data-panel">
+        <h3>🔄 Data Overlap Between Methods</h3>
+        <div class="venn-container">
+          <div class="venn-diagram">
+            <div class="venn-circle venn-server">
+              <span class="venn-label">Server Logs</span>
+              <div class="venn-items">IP Address<br/>Status Codes<br/>Bot Traffic<br/>Response Size</div>
+            </div>
+            <div class="venn-circle venn-ga">
+              <span class="venn-label">Google Analytics</span>
+              <div class="venn-items">Sessions<br/>Bounce Rate<br/>Demographics<br/>Conversions</div>
+            </div>
+            <div class="venn-circle venn-devtools">
+              <span class="venn-label">Dev Tools</span>
+              <div class="venn-items">DOM State<br/>JS Console<br/>Memory<br/>Cache</div>
+            </div>
+            <div class="venn-overlap overlap-all">
+              <div class="venn-items">URL<br/>User-Agent<br/>Timestamp</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strengths & Limitations -->
+      <div class="strengths-grid">
+        <div class="strength-card strength-server">
+          <h3>🗄️ Server Logs</h3>
+          <div class="strength-section">
+            <h4>✅ Strengths</h4>
+            <ul>
+              <li>No client-side code required</li>
+              <li>Captures ALL requests (including bots)</li>
+              <li>Full IP address visibility</li>
+              <li>No privacy consent needed</li>
+              <li>Works even if JS is disabled</li>
+            </ul>
+          </div>
+          <div class="strength-section">
+            <h4>❌ Limitations</h4>
+            <ul>
+              <li>No user interaction data</li>
+              <li>Cannot track cached pages</li>
+              <li>Difficult to identify unique users</li>
+              <li>Large storage requirements</li>
+              <li>Requires manual analysis tools</li>
+            </ul>
+          </div>
+        </div>
+        <div class="strength-card strength-ga">
+          <h3>📈 Google Analytics</h3>
+          <div class="strength-section">
+            <h4>✅ Strengths</h4>
+            <ul>
+              <li>Rich user behavior insights</li>
+              <li>Real-time dashboard</li>
+              <li>Demographic & geographic data</li>
+              <li>Conversion & goal tracking</li>
+              <li>Cross-device tracking</li>
+            </ul>
+          </div>
+          <div class="strength-section">
+            <h4>❌ Limitations</h4>
+            <ul>
+              <li>Requires JavaScript enabled</li>
+              <li>Blocked by ad blockers</li>
+              <li>Data sent to third party (Google)</li>
+              <li>GDPR/privacy compliance needed</li>
+              <li>Sampling on large datasets</li>
+            </ul>
+          </div>
+        </div>
+        <div class="strength-card strength-devtools">
+          <h3>🛠️ Browser Dev Tools</h3>
+          <div class="strength-section">
+            <h4>✅ Strengths</h4>
+            <ul>
+              <li>Deepest level of detail</li>
+              <li>Real-time inspection</li>
+              <li>Full network request visibility</li>
+              <li>Performance profiling</li>
+              <li>No setup or external tools needed</li>
+            </ul>
+          </div>
+          <div class="strength-section">
+            <h4>❌ Limitations</h4>
+            <ul>
+              <li>Only inspects a single session</li>
+              <li>Data not stored or aggregated</li>
+              <li>Requires technical knowledge</li>
+              <li>Cannot be automated easily</li>
+              <li>Not suitable for production monitoring</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer id="main-footer">
+    <div class="footer-inner">
+      <p>Web Analytics Comparison Project — Semester 9 Study</p>
+      <p class="footer-sub">Built with Node.js + Express | Google Analytics 4 | Browser DevTools</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

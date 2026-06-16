@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Category Header -->
+<section class="category-header">
+  <h1 class="category-page-title">
+    <span class="gradient-text">{{ active_category | title }}</span> News
+  </h1>
+  <p class="category-page-sub">Browsing the latest articles in {{ active_category | title }}</p>
+</section>
+
+<!-- Category Chips -->
+<section class="category-chips">
+  {% for cat in categories %}
+    <a href="{{ url_for('category', category_name=cat) if cat != 'top' else url_for('index') }}"
+       class="chip {{ 'chip-active' if active_category == cat else '' }}">
+      {{ cat | title }}
+    </a>
+  {% endfor %}
+</section>
+
+<!-- Error State -->
+{% if error %}
+<section class="error-banner">
+  <div class="error-icon">⚠️</div>
+  <div class="error-content">
+    <h3>Could not load articles</h3>
+    <p>{{ error }}</p>
+  </div>
+</section>
+{% endif %}
+
+<!-- Articles Grid -->
+{% if articles %}
+<section class="articles-grid">
+  {% for article in articles %}
+  <article class="article-card">
+    {% if article.image_url %}
+    <div class="article-image">
+      <img src="{{ article.image_url }}" alt="{{ article.title }}" loading="lazy"
+           onerror="this.parentElement.classList.add('img-error'); this.remove();" />
+    </div>
+    {% else %}
+    <div class="article-image img-placeholder">
+      <span class="placeholder-icon">📰</span>
+    </div>
+    {% endif %}
+
+    <div class="article-body">
+      <div class="article-meta">
+        {% if article.source_icon %}
+          <img src="{{ article.source_icon }}" alt="" class="source-icon"
+               onerror="this.style.display='none';" />
+        {% endif %}
+        <span class="source-name">{{ article.source_name }}</span>
+        {% if article.pubDate %}
+          <span class="article-date">· {{ article.pubDate[:10] }}</span>
+        {% endif %}
+      </div>
+
+      <h2 class="article-title">
+        <a href="{{ article.link }}" target="_blank" rel="noopener noreferrer">
+          {{ article.title }}
+        </a>
+      </h2>
+
+      {% if article.description %}
+        <p class="article-desc">{{ article.description[:200] }}{% if article.description|length > 200 %}…{% endif %}</p>
+      {% endif %}
+
+      <div class="article-footer">
+        {% if article.category %}
+          <div class="article-tags">
+            {% for cat in article.category[:3] %}
+              <a href="{{ url_for('category', category_name=cat) }}" class="tag">{{ cat }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <a href="{{ article.link }}" target="_blank" rel="noopener noreferrer" class="read-more">
+          Read more →
+        </a>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% elif not error %}
+<section class="empty-state">
+  <div class="empty-icon">🗞️</div>
+  <h3>No articles found in {{ active_category | title }}</h3>
+  <p>Try selecting a different category from the navigation bar.</p>
+</section>
+{% endif %}
+{% endblock %}

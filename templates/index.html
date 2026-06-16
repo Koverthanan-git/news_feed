@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Banner -->
+<section class="hero-banner">
+  <div class="hero-bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+  </div>
+  <div class="hero-inner">
+    <span class="hero-badge">Live Feed</span>
+    <h1 class="hero-title">Your daily briefing,<br><span class="gradient-text">curated intelligently.</span></h1>
+    <p class="hero-subtitle">Real-time news from around the world — powered by first-party analytics with zero third-party tracking.</p>
+  </div>
+</section>
+
+<!-- Category Chips (mobile-friendly) -->
+<section class="category-chips">
+  {% for cat in categories %}
+    <a href="{{ url_for('category', category_name=cat) if cat != 'top' else url_for('index') }}"
+       class="chip {{ 'chip-active' if active_category == cat else '' }}">
+      {{ cat | title }}
+    </a>
+  {% endfor %}
+</section>
+
+<!-- Error State -->
+{% if error %}
+<section class="error-banner">
+  <div class="error-icon">⚠️</div>
+  <div class="error-content">
+    <h3>Could not load articles</h3>
+    <p>{{ error }}</p>
+  </div>
+</section>
+{% endif %}
+
+<!-- Articles Grid -->
+{% if articles %}
+<section class="articles-grid">
+  {% for article in articles %}
+  <article class="article-card">
+    {% if article.image_url %}
+    <div class="article-image">
+      <img src="{{ article.image_url }}" alt="{{ article.title }}" loading="lazy"
+           onerror="this.parentElement.classList.add('img-error'); this.remove();" />
+    </div>
+    {% else %}
+    <div class="article-image img-placeholder">
+      <span class="placeholder-icon">📰</span>
+    </div>
+    {% endif %}
+
+    <div class="article-body">
+      <div class="article-meta">
+        {% if article.source_icon %}
+          <img src="{{ article.source_icon }}" alt="" class="source-icon"
+               onerror="this.style.display='none';" />
+        {% endif %}
+        <span class="source-name">{{ article.source_name }}</span>
+        {% if article.pubDate %}
+          <span class="article-date">· {{ article.pubDate[:10] }}</span>
+        {% endif %}
+      </div>
+
+      <h2 class="article-title">
+        <a href="{{ article.link }}" target="_blank" rel="noopener noreferrer">
+          {{ article.title }}
+        </a>
+      </h2>
+
+      {% if article.description %}
+        <p class="article-desc">{{ article.description[:200] }}{% if article.description|length > 200 %}…{% endif %}</p>
+      {% endif %}
+
+      <div class="article-footer">
+        {% if article.category %}
+          <div class="article-tags">
+            {% for cat in article.category[:3] %}
+              <a href="{{ url_for('category', category_name=cat) }}" class="tag">{{ cat }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <a href="{{ article.link }}" target="_blank" rel="noopener noreferrer" class="read-more">
+          Read more →
+        </a>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% elif not error %}
+<section class="empty-state">
+  <div class="empty-icon">🗞️</div>
+  <h3>No articles found</h3>
+  <p>Try selecting a different category from the navigation bar.</p>
+</section>
+{% endif %}
+{% endblock %}

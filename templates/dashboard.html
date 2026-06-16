@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<section class="dash-hero">
+  <div class="dash-hero-inner">
+    <span class="hero-badge">Analytics Console</span>
+    <h1 class="hero-title">First-Party <span class="gradient-text">Analytics Dashboard</span></h1>
+    <p class="hero-subtitle">All data collected locally via Flask server hooks — zero third-party scripts, full transparency.</p>
+  </div>
+</section>
+
+<!-- ═══════ Stats Summary Row ═══════ -->
+<section class="dash-stats-row">
+  <div class="dash-stat-card">
+    <div class="dash-stat-value">{{ total_views }}</div>
+    <div class="dash-stat-label">Total Page Views</div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-value">{{ unique_sessions }}</div>
+    <div class="dash-stat-label">Unique Sessions</div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-value">{{ top_page }}</div>
+    <div class="dash-stat-label">Most Visited Page</div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-value">{{ top_category | title }}</div>
+    <div class="dash-stat-label">Top Category</div>
+  </div>
+</section>
+
+<!-- ═══════ Two-Column Layout ═══════ -->
+<section class="dash-grid-2col">
+
+  <!-- PAGE VIEW STATS -->
+  <div class="dash-panel">
+    <h3 class="dash-panel-title">📄 Page View Distribution</h3>
+    <p class="dash-panel-desc">Hit counts per route, collected via <code>@app.before_request</code></p>
+
+    {% if page_stats %}
+    <div class="bar-chart">
+      {% for stat in page_stats %}
+      <div class="bar-row">
+        <span class="bar-label">{{ stat.path }}</span>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-purple" style="width: {{ (stat.hits / max_page_hits * 100) | round }}%">
+            <span class="bar-value">{{ stat.hits }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="dash-empty">No pageview data yet. Browse the site to generate data.</div>
+    {% endif %}
+  </div>
+
+  <!-- CATEGORY STATS -->
+  <div class="dash-panel">
+    <h3 class="dash-panel-title">🏷️ Category Distribution</h3>
+    <p class="dash-panel-desc">Most frequently requested news categories</p>
+
+    {% if category_stats %}
+    <div class="bar-chart">
+      {% for stat in category_stats %}
+      <div class="bar-row">
+        <span class="bar-label">{{ stat.category | title }}</span>
+        <div class="bar-track">
+          <div class="bar-fill bar-fill-cyan" style="width: {{ (stat.count / max_cat_hits * 100) | round }}%">
+            <span class="bar-value">{{ stat.count }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="dash-empty">No category data yet. Visit category pages to generate data.</div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ═══════ Hourly Distribution ═══════ -->
+<section class="dash-section">
+  <div class="dash-panel">
+    <h3 class="dash-panel-title">🕐 Hourly Traffic Distribution</h3>
+    <p class="dash-panel-desc">Page views grouped by hour of day (24h format)</p>
+
+    <div class="hourly-chart">
+      {% for hour, hits in hourly_dist.items() %}
+      <div class="hourly-bar-container">
+        <div class="hourly-bar" style="height: {{ (hits / max_hourly * 100) if max_hourly > 0 else 0 }}%">
+          <span class="hourly-tooltip">{{ hits }}</span>
+        </div>
+        <span class="hourly-label">{{ '%02d' | format(hour) }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ Clickstream Panel ═══════ -->
+<section class="dash-section">
+  <div class="dash-panel">
+    <h3 class="dash-panel-title">🔗 Session Clickstreams</h3>
+    <p class="dash-panel-desc">Navigation paths showing entry → exit points for each visitor session</p>
+
+    {% if clickstreams %}
+    <div class="clickstream-list">
+      {% for cs in clickstreams %}
+      <div class="clickstream-item">
+        <div class="cs-header">
+          <span class="cs-session-badge">🆔 {{ cs.session_id }}</span>
+          <span class="cs-time">{{ cs.updated_at | timeago }}</span>
+        </div>
+        <div class="cs-path">
+          {% for step in cs.path_chain.split(' → ') %}
+            <span class="cs-step">{{ step }}</span>
+            {% if not loop.last %}
+              <span class="cs-arrow">→</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="dash-empty">No clickstream data yet. Navigate between pages to generate paths.</div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ═══════ Recent Activity Table ═══════ -->
+<section class="dash-section">
+  <div class="dash-panel">
+    <h3 class="dash-panel-title">📋 Recent Page Views (Raw Log)</h3>
+    <p class="dash-panel-desc">Last {{ recent_views | length }} raw pageview entries from the SQLite database</p>
+
+    {% if recent_views %}
+    <div class="table-wrapper">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Path</th>
+            <th>Session</th>
+            <th>User Agent</th>
+            <th>Referrer</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in recent_views %}
+          <tr>
+            <td class="mono">{{ row.timestamp | timeago }}</td>
+            <td><span class="path-badge">{{ row.path }}</span></td>
+            <td class="mono">{{ row.session_id or '—' }}</td>
+            <td class="ua-cell">{{ row.user_agent | truncate_ua }}</td>
+            <td class="mono">{{ row.referrer or 'Direct' }}</td>
+            <td class="mono">{{ row.ip or '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="dash-empty">No pageview records yet.</div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ═══════ Tracking Method Info ═══════ -->
+<section class="dash-section">
+  <div class="dash-panel info-panel">
+    <h3 class="dash-panel-title">ℹ️ How This Tracking Works</h3>
+    <div class="tracking-info-grid">
+      <div class="tracking-info-item">
+        <h4>🛡️ No Third-Party Scripts</h4>
+        <p>This dashboard uses zero external analytics (no Google Analytics, no cookies from ad networks). All data stays on this server.</p>
+      </div>
+      <div class="tracking-info-item">
+        <h4>🪝 Flask Request Hook</h4>
+        <p>The <code>@app.before_request</code> decorator intercepts every incoming request and logs it to a local SQLite database before the route handler runs.</p>
+      </div>
+      <div class="tracking-info-item">
+        <h4>🗂️ SQLite Storage</h4>
+        <p>All pageviews, category hits, and clickstream paths are stored in <code>data/analytics.db</code> — a lightweight, file-based database with no external dependencies.</p>
+      </div>
+      <div class="tracking-info-item">
+        <h4>🔗 Session Clickstreams</h4>
+        <p>Flask's session cookie tracks an ordered list of pages each visitor navigates. This reveals entry points, exit points, and common navigation patterns.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

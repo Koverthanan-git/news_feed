@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="The Daily Digest — A premium news aggregator with built-in first-party analytics. No third-party tracking." />
+  <title>{{ page_title }} — The Daily Digest</title>
+
+  <!-- Favicon (emoji-based SVG) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='85'>📰</text></svg>" />
+
+  <!-- Google Fonts: Outfit + Space Grotesk + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <!-- ═══════════ NAVIGATION ═══════════ -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="{{ url_for('index') }}" class="nav-logo">
+        <span class="logo-icon">D</span>
+        <span class="logo-text">The Daily Digest</span>
+      </a>
+
+      <div class="nav-categories" id="nav-categories">
+        {% for cat in categories %}
+          <a href="{{ url_for('category', category_name=cat) if cat != 'top' else url_for('index') }}"
+             class="nav-cat {{ 'active' if active_category == cat else '' }}">
+            {{ cat | title }}
+          </a>
+        {% endfor %}
+      </div>
+
+      <a href="{{ url_for('dashboard') }}" class="nav-dashboard-btn {{ 'active' if active_category is none else '' }}">
+        <span class="dashboard-icon">📊</span>
+        Analytics
+      </a>
+
+      <button class="hamburger" id="hamburger" onclick="document.getElementById('nav-categories').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══════════ MAIN CONTENT ═══════════ -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>The Daily Digest — Premium News Intelligence</p>
+      <p class="footer-sub">Powered by Flask · SQLite First-Party Analytics · Zero Third-Party Tracking</p>
+    </div>
+  </footer>
+</body>
+</html>
